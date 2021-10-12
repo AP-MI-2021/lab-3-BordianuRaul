@@ -73,20 +73,84 @@ def test_get_longest_all_not_prime():
         ([10])
 
 
+def get_longest_average_below(lst: list[int], average: float) -> list[int]:
+    """
+    Afiseaza cea mai lunga secventa de elemente a caror medie nu depaseste o anumita valoare
+    :param lst: lista de elemente
+    :param average: valoarea care nu trebuie depasita
+    :return: secventa de elemente maxima
+    """
+    lista_secvente = []
+
+    for start in range(0, len(lst)+1):
+        for stop in range(start+1, len(lst)+1):
+            if is_smaller_than_average(lst[start:stop], average):
+                lista_secvente.append(lst[start:stop])
+
+    secventa_max = []
+
+    for secventa in lista_secvente:
+        if len(secventa) > len(secventa_max):
+            secventa_max = secventa
+    return secventa_max
+
+
+def is_smaller_than_average(sec, average):
+    """
+    Verifica daca media elementelor unei liste este mai mare sau mai mica
+    decat a unei valori transmise ca parametru
+    :param sec: lista de elemente
+    :param average: valoarea care nu trebuie depasita
+    :return: True sau False
+    """
+    s = 0
+
+    for element in sec:
+        s = s + element
+
+    media = s/len(sec)
+
+    if media > average:
+        return False
+    else:
+        return True
+
+
+def test_get_longest_average_below():
+    assert get_longest_average_below([1, 2, 3, 4, 5, 6, 7, 8, 9, 10], 3.7) == \
+            [1, 2, 3, 4, 5, 6]
+
+    assert get_longest_average_below([10, 2, 7, 12, 30, 21, 2], 7) == [10, 2, 7]
+
+    assert get_longest_average_below([20, 15, 10, 5, 1], 3) ==  \
+        [5, 1]
+
+
 def main():
 
     while True:
         print("1.Cea mai lunga secventa de elemente neprime dintr-o lista \n"
+              "2.Cea mai lunga secventa de elemente ale caror medie nu depaseste o valoare citita \n"
               "x. Iesire din program")
+
         optiune = input("Selectati optiunea: ")
+
         if optiune == '1':
             lista = citire_lista()
             print(get_longest_all_not_prime(lista))
+
+        elif optiune == '2':
+            lista = citire_lista()
+            average = float(input("Introduceti valoarea care nu trebuie depasita: "))
+            print(get_longest_average_below(lista, average))
+
         elif optiune == 'x':
             break
+
         else:
             print("Optiune invalida!")
 
 
 test_get_longest_all_not_prime()
+test_get_longest_average_below()
 main()
