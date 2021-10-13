@@ -126,11 +126,76 @@ def test_get_longest_average_below():
         [5, 1]
 
 
+def nr_digit(n):
+    """
+    Afla numarul de cifre ale unui numar
+    :param n: numarul
+    :return: numarul de cifre ale lui n
+    """
+    nr_cifre = 0
+    while n:
+        nr_cifre += 1
+        n //= 10
+    return nr_cifre
+
+
+def is_sec_digit_count_desc(sec):
+    """
+    Verifica daca toate elementele unei liste au numarul cifrelor in ordine descrescatoare
+    **Am considerat ca elementele cu numarul de cifre egal sunt considerate tot in ordine descrescatoare
+    :param sec: lista de elemente
+    :return: True sau False
+    """
+    nr_cifre_precedent = nr_digit(sec[0])
+
+    for i in range(1, len(sec)):
+        nr_cifre_curent = nr_digit(sec[i])
+        if nr_cifre_precedent < nr_cifre_curent:
+            return False
+        nr_cifre_precedent = nr_cifre_curent
+
+    return True
+
+
+def get_longest_digit_count_desc(lst: list[int]) -> list[int]:
+    """
+    Determina cea mai lunga secventa de elemente care au numarul de cifre in ordine descrescatoare
+    :param lst:lista de elemente
+    :return:secventa maxima de elemente care au cifrele in ordine descrescatoare din lista
+    """
+    lista_secvente = []
+
+    for start in range(0, len(lst) + 1):
+        for stop in range(start + 1, len(lst) + 1):
+            if is_sec_digit_count_desc(lst[start:stop]):
+                lista_secvente.append(lst[start:stop])
+
+    secventa_max = []
+
+    for secventa in lista_secvente:
+        if len(secventa) > len(secventa_max):
+            secventa_max = secventa
+
+    return secventa_max
+
+
+def test_get_longest_digit_count_desc():
+    assert get_longest_digit_count_desc([12345, 1234, 123, 9999, 123, 12, 1]) ==  \
+        [9999, 123, 12, 1]
+    assert get_longest_digit_count_desc([1, 12, 123, 12, 1]) ==  \
+        [123, 12, 1]
+    assert get_longest_digit_count_desc([12345, 12345, 123, 123, 9999, 888, 777]) ==  \
+        [12345, 12345, 123, 123]
+    assert get_longest_digit_count_desc([12345, 1234, 123, 12, 1, 0, 12, 123, 1234, 12345]) ==  \
+        [12345, 1234, 123, 12, 1, 0]
+
+
 def main():
 
     while True:
         print("1.Cea mai lunga secventa de elemente neprime dintr-o lista \n"
               "2.Cea mai lunga secventa de elemente ale caror medie nu depaseste o valoare citita \n"
+              "3.Cea mai lunga secventa care are numarul de cifre al elementelor in ordine descrescatoare \n"
               "x. Iesire din program")
 
         optiune = input("Selectati optiunea: ")
@@ -143,6 +208,10 @@ def main():
             lista = citire_lista()
             average = float(input("Introduceti valoarea care nu trebuie depasita: "))
             print(get_longest_average_below(lista, average))
+
+        elif optiune == '3':
+            lista = citire_lista()
+            print(get_longest_digit_count_desc(lista))
 
         elif optiune == 'x':
             break
